@@ -13,7 +13,7 @@ public class Main {
         }
         Path inputFile = Paths.get(args[0]);
         CalendarBuilder cp = new CalendarBuilder();
-        CalenderBookings cb = null;
+        Calendar cb = null;
         try {
             cb = cp.build(inputFile);
         } catch (IOException e) {

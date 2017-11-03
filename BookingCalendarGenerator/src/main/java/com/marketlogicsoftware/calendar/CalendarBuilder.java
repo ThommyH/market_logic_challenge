@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CalendarBuilder {
 
-    public CalenderBookings build(Path inputFile) throws IOException {
+    public Calendar build(Path inputFile) throws IOException {
         String submissionEntry;
         String reservationEntry;
         List<Reservation> reservationsList = new ArrayList<>();
@@ -33,7 +33,7 @@ public class CalendarBuilder {
                 (reservationEntry = br.readLine()) != null ){
             reservationsList.add(createReservation(submissionEntry, reservationEntry));
         }
-        return new CalenderBookings(openingTime, closingTime, reservationsList);
+        return new Calendar(openingTime, closingTime, reservationsList);
     }
 
     /**

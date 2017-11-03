@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
 
-public class CalenderBookings {
+public class Calendar {
 
     private LocalTime openingTime;
     private LocalTime closingTime;
     private TreeMap<LocalDate, List<Reservation>> reservationsByDay = new TreeMap<LocalDate, List<Reservation>>();
 
-    public CalenderBookings(LocalTime openingTime, LocalTime closingTime, List<Reservation> reservations) {
+    public Calendar(LocalTime openingTime, LocalTime closingTime, List<Reservation> reservations) {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
         reservations
