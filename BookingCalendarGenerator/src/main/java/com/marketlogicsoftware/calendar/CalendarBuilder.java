@@ -14,12 +14,12 @@ import java.util.List;
 
 public class CalendarBuilder {
 
+
+    public static final DateTimeFormatter TIME_FORMAT_SUBMISSIONS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter TIME_FORMAT_RESERVATION = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
     /**
      * Creates a Calendar object from the given input string
-     * e.g.
-     * 0900 1700
-     * 2015-08-17 10:17:06 EMP001
-     * 2015-08-21 09:00 2
      *
      * @param inputString
      * @return Calendar based on the inputString
@@ -75,17 +75,14 @@ public class CalendarBuilder {
     private Reservation buildReservation(String submissionEntry, String reservationEntry) {
         String[] submissionSplit = submissionEntry.split(" ");
         String[] reservationSplit = reservationEntry.split(" ");
-        DateTimeFormatter dateTimeFormatterWithSeconds = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        DateTimeFormatter dateTimeFormatterWOSeconds = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
         // parse submissionEntry
         String submissionTimeStr = submissionSplit[0] + " " + submissionSplit[1];
-        LocalDateTime bookingTime = LocalDateTime.parse(submissionTimeStr, dateTimeFormatterWithSeconds);
+        LocalDateTime bookingTime = LocalDateTime.parse(submissionTimeStr, TIME_FORMAT_SUBMISSIONS);
         String userId = submissionSplit[2];
 
         // parse reservationEntry
         String reservationTimeStr = reservationSplit[0] + " " + reservationSplit[1];
-        LocalDateTime reservationStartTime = LocalDateTime.parse(reservationTimeStr, dateTimeFormatterWOSeconds);
+        LocalDateTime reservationStartTime = LocalDateTime.parse(reservationTimeStr, TIME_FORMAT_RESERVATION);
         int duration = Integer.parseInt(reservationSplit[2]);
         LocalDateTime reservationEndTime = reservationStartTime.plusHours(duration);
 

@@ -1,17 +1,22 @@
 package com.marketlogicsoftware.calendar;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.TreeMap;
 
 public class Calendar {
 
     private LocalTime openingTime;
     private LocalTime closingTime;
-    private TreeMap<LocalDate, List<Reservation>> reservationsByDay = new TreeMap<>();
+    private TreeMap<LocalDate, List<Reservation>> reservationsByDate = new TreeMap<>();
 
+    /**
+     * created a calendar object by filtering out reservations who overlap
+     * for resolving overlapping reservations, the calendar prioritize reservations that came first
+     * @param openingTime the time when the office opens
+     * @param closingTime the time when the office closes
+     * @param reservations list of Reservations
+     */
     protected Calendar(LocalTime openingTime, LocalTime closingTime, List<Reservation> reservations) {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
@@ -31,32 +36,30 @@ public class Calendar {
      * 16:00 17:00 EMP004
      */
     public void printCalender() {
-        for (LocalDate date : reservationsByDay.keySet()){
+        for (LocalDate date : reservationsByDate.keySet()){
             System.out.println(date);
-            reservationsByDay.get(date).stream().sorted().forEach(Reservation::print);
+            reservationsByDate.get(date).stream().sorted().forEach(Reservation::print);
         }
     }
 
     /**
      *
-     * @return The list of registered and filtered reservations
+     * @return The list of registered and valid reservations
      */
     public List<Reservation> getRegisteredReservations(){
         List<Reservation> reservations = new ArrayList<>();
-        for (LocalDate day : reservationsByDay.keySet()){
-            reservations.addAll(reservationsByDay.get(day));
+        for (LocalDate day : reservationsByDate.keySet()){
+            reservations.addAll(reservationsByDate.get(day));
         }
         return reservations;
     }
 
     private void addReservation(Reservation newReservation) {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
         // check if newReservation is within business hours
-        if (!checkReservationIsWithinOpeningHours(newReservation)) return;
+        if (!isReservationWithinOpeningHours(newReservation)) return;
         LocalDate dateOfReservation = newReservation.getReservationStart().toLocalDate();
-        if (reservationsByDay.containsKey(dateOfReservation)){
-            List<Reservation> reservationsOfDay = reservationsByDay.get(dateOfReservation);
+        if (reservationsByDate.containsKey(dateOfReservation)){
+            List<Reservation> reservationsOfDay = reservationsByDate.get(dateOfReservation);
             boolean isIntersectingWithOther = checkForIntersectingReservations(reservationsOfDay, newReservation);
             if (!isIntersectingWithOther){
                 reservationsOfDay.add(newReservation);
@@ -64,7 +67,7 @@ public class Calendar {
         } else {
             List<Reservation> newListOfReservations = new ArrayList<>();
             newListOfReservations.add(newReservation);
-            reservationsByDay.put(dateOfReservation, newListOfReservations);
+            reservationsByDate.put(dateOfReservation, newListOfReservations);
         }
     }
 
@@ -77,7 +80,7 @@ public class Calendar {
         return false;
     }
 
-    private boolean checkReservationIsWithinOpeningHours(Reservation reservation) {
+    private boolean isReservationWithinOpeningHours(Reservation reservation) {
         // reservation must be at opening time of after
         boolean valid = true;
         if (!reservation.getReservationStart().toLocalTime().isAfter(openingTime) &&
