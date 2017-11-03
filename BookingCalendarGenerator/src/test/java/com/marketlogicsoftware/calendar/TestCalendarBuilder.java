@@ -44,9 +44,9 @@ public class TestCalendarBuilder {
     }
 
     @Test
-    public void testOpeningAndClosingTimesAreSetCorrectly() {
-        assertTrue(calendar.getOpeningTime().equals(LocalTime.parse("09:00")));
-        assertTrue(calendar.getClosingTime().equals(LocalTime.parse("17:30")));
+    public void testOpeningAndClosingTimes() {
+        assertEquals(calendar.getOpeningTime(), LocalTime.parse("09:00"));
+        assertEquals(calendar.getClosingTime(), LocalTime.parse("17:30"));
     }
 
     @Test
@@ -90,7 +90,6 @@ public class TestCalendarBuilder {
 
     @Test
     public void testOutputFormatting(){
-        PrintStream save_out = System.out;
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         calendar.printCalender();

@@ -13,9 +13,8 @@ public class Main {
         }
         Path inputFile = Paths.get(args[0]);
         CalendarBuilder cp = new CalendarBuilder();
-        Calendar cb = null;
         try {
-            cb = cp.build(inputFile);
+            Calendar cb = cp.build(inputFile);
             cb.printCalender();
         } catch (IOException e) {
             e.printStackTrace();
