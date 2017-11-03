@@ -1,4 +1,4 @@
-package com.marketlogicsoftware.parser;
+package com.marketlogicsoftware.calendar;
 
 import java.time.LocalDateTime;
 
@@ -21,20 +21,25 @@ public class Reservation implements Comparable<Reservation> {
                 bookingTime.toString(), userId, reservationStart.toString(), reservationEnd);
     }
 
-    public boolean doesIntersectWith(Reservation other){
-
+    /**
+     * checks if this Reservation overlaps with another Reservation
+     * @param other
+     * @return
+     */
+    public boolean doesOverlapWith(Reservation other){
         // no intersection if reservations are on different days
-        if (!other.getReservationStart().toLocalDate().equals(this.getReservationStart().toLocalDate())) return false;
+        if (!other.getReservationStart().toLocalDate().equals(reservationStart.toLocalDate())) return false;
         // order reservations by startdate
-        Reservation first = (this.getReservationStart().isBefore(other.getReservationStart())) ? this : other;
-        Reservation second = (this.getReservationStart().isBefore(other.getReservationStart())) ? other : this;
+        Reservation first = (reservationStart.isBefore(other.getReservationStart())) ? this : other;
+        Reservation second = (reservationStart.isBefore(other.getReservationStart())) ? other : this;
         // reservations overlap if end of the first reservation is after the start of the other
-        System.out.println("intersect " + this + "\n" + other + " " + first.getReservationEnd().isAfter(second.getReservationStart().plusNanos(1)));
-        return (first.getReservationEnd().isAfter(second.getReservationStart().plusNanos(1)));
+        // however, they can be the same value without overlapping
+        return (first.getReservationEnd().isAfter(second.getReservationStart()) ||
+                !first.getReservationEnd().equals(second.getReservationStart()));
     }
 
     public boolean isSubmittedEarlier(Reservation other) {
-        return this.getBookingTime().isBefore(other.getBookingTime());
+        return bookingTime.isBefore(other.getBookingTime());
     }
 
     public LocalDateTime getBookingTime() {
@@ -59,6 +64,6 @@ public class Reservation implements Comparable<Reservation> {
 
     @Override
     public int compareTo(Reservation o) {
-        return this.getBookingTime().compareTo(o.getBookingTime());
+        return bookingTime.compareTo(o.getBookingTime());
     }
 }

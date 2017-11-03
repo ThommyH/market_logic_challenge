@@ -1,19 +1,15 @@
-package com.marketlogicsoftware.parser;
+package com.marketlogicsoftware.calendar;
 
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Stream;
 
 public class CalendarBuilder {
 

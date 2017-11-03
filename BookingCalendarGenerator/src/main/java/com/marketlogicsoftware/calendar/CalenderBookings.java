@@ -1,11 +1,10 @@
-package com.marketlogicsoftware.parser;
+package com.marketlogicsoftware.calendar;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public class CalenderBookings {
 
@@ -44,7 +43,7 @@ public class CalenderBookings {
 
     private Optional<Reservation> findFirstIntersectingReservation(List<Reservation> reservationsOfDay, Reservation newReservation) {
         for (Reservation reservation : reservationsOfDay){
-            if (reservation.doesIntersectWith(newReservation)){
+            if (reservation.doesOverlapWith(newReservation)){
                 return Optional.of(reservation);
             }
         }

@@ -1,5 +1,4 @@
-import com.marketlogicsoftware.parser.CalendarBuilder;
-import com.marketlogicsoftware.parser.CalenderBookings;
+package com.marketlogicsoftware.calendar;
 
 import java.io.IOException;
 import java.nio.file.Path;
