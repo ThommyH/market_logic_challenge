@@ -1,6 +1,6 @@
-###Market Logic Software Challenge
+Market Logic Software Challenge
 
-##Input (booking_requests.txt):
+Input (booking_requests.txt):
 0900 1730
 2015-08-17 10:17:06 EMP001
 2015-08-21 09:00 2
@@ -13,13 +13,13 @@
 2015-08-15 17:29:12 EMP005
 2015-08-21 16:00 3
 
-##Output:
+Output:
 2015-08-21
 09:00 11:00 EMP002
 2015-08-22
 14:00 16:00 EMP003
 16:00 17:00 EMP004
 
-##Usage:
+Usage:
 ./run_script.sh dev_build
 ./run_script.sh dev_run src/test/resources/booking_requests.txt
