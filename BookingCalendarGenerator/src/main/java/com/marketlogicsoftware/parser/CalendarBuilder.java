@@ -56,10 +56,11 @@ public class CalendarBuilder {
 
         // parse reservationEntry
         String reservationTimeStr = reservationSplit[0] + " " + reservationSplit[1];
-        LocalDateTime reservationTime = LocalDateTime.parse(reservationTimeStr, dateTimeFormatterWOSeconds);
-        int roomId = Integer.parseInt(reservationSplit[2]);
+        LocalDateTime reservationStartTime = LocalDateTime.parse(reservationTimeStr, dateTimeFormatterWOSeconds);
+        int duration = Integer.parseInt(reservationSplit[2]);
+        LocalDateTime reservationEndTime = reservationStartTime.plusHours(duration);
 
-        return new Reservation(bookingTime,userId,reservationTime, roomId);
+        return new Reservation(bookingTime,userId,reservationStartTime, reservationEndTime);
     }
 
     /**
