@@ -1,4 +1,4 @@
-### Market Logic Software Challenge
+# Market Logic Software Challenge
 
 ## Input (booking_requests.txt):
 - 0900 1730
