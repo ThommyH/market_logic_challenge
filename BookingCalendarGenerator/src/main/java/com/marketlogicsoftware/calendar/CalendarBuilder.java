@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CalendarBuilder {
-
+    
     public static final DateTimeFormatter TIME_FORMAT_SUBMISSIONS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public static final DateTimeFormatter TIME_FORMAT_RESERVATION = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
