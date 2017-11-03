@@ -61,7 +61,6 @@ public class CalenderBookings {
         for (LocalDate date : reservationsByDay.keySet()){
             System.out.println(date);
             reservationsByDay.get(date).stream().sorted().forEach(r -> r.print());
-            System.out.println();
         }
     }
 }
