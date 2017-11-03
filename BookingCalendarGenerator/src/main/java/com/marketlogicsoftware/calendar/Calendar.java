@@ -10,15 +10,43 @@ public class Calendar {
 
     private LocalTime openingTime;
     private LocalTime closingTime;
-    private TreeMap<LocalDate, List<Reservation>> reservationsByDay = new TreeMap<LocalDate, List<Reservation>>();
+    private TreeMap<LocalDate, List<Reservation>> reservationsByDay = new TreeMap<>();
 
-    public Calendar(LocalTime openingTime, LocalTime closingTime, List<Reservation> reservations) {
+    protected Calendar(LocalTime openingTime, LocalTime closingTime, List<Reservation> reservations) {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
         reservations
                 .stream()
                 .sorted()
-                .forEach(reservation -> addReservation(reservation));
+                .forEach(this::addReservation);
+    }
+
+    /**
+     * Prints the calendar to std out
+     * e.g.
+     * 2015-08-21
+     * 09:00 11:00 EMP002
+     * 2015-08-22
+     * 14:00 16:00 EMP003
+     * 16:00 17:00 EMP004
+     */
+    public void printCalender() {
+        for (LocalDate date : reservationsByDay.keySet()){
+            System.out.println(date);
+            reservationsByDay.get(date).stream().sorted().forEach(Reservation::print);
+        }
+    }
+
+    /**
+     *
+     * @return The list of registered and filtered reservations
+     */
+    public List<Reservation> getRegisteredReservations(){
+        List<Reservation> reservations = new ArrayList<>();
+        for (LocalDate day : reservationsByDay.keySet()){
+            reservations.addAll(reservationsByDay.get(day));
+        }
+        return reservations;
     }
 
     private void addReservation(Reservation newReservation) {
@@ -29,8 +57,8 @@ public class Calendar {
         LocalDate dateOfReservation = newReservation.getReservationStart().toLocalDate();
         if (reservationsByDay.containsKey(dateOfReservation)){
             List<Reservation> reservationsOfDay = reservationsByDay.get(dateOfReservation);
-            Optional<Reservation> intersectingReservation = findFirstIntersectingReservation(reservationsOfDay, newReservation);
-            if (!intersectingReservation.isPresent()){
+            boolean isIntersectingWithOther = checkForIntersectingReservations(reservationsOfDay, newReservation);
+            if (!isIntersectingWithOther){
                 reservationsOfDay.add(newReservation);
             }
         } else {
@@ -38,16 +66,15 @@ public class Calendar {
             newListOfReservations.add(newReservation);
             reservationsByDay.put(dateOfReservation, newListOfReservations);
         }
-
     }
 
-    private Optional<Reservation> findFirstIntersectingReservation(List<Reservation> reservationsOfDay, Reservation newReservation) {
+    private boolean checkForIntersectingReservations(List<Reservation> reservationsOfDay, Reservation newReservation) {
         for (Reservation reservation : reservationsOfDay){
             if (reservation.doesOverlapWith(newReservation)){
-                return Optional.of(reservation);
+                return true;
             }
         }
-        return Optional.empty();
+        return false;
     }
 
     private boolean checkReservationIsWithinOpeningHours(Reservation reservation) {
@@ -64,10 +91,11 @@ public class Calendar {
         return valid;
     }
 
-    public void printCalender() {
-        for (LocalDate date : reservationsByDay.keySet()){
-            System.out.println(date);
-            reservationsByDay.get(date).stream().sorted().forEach(r -> r.print());
-        }
+    public LocalTime getOpeningTime(){
+        return openingTime;
+    }
+
+    public LocalTime getClosingTime(){
+        return closingTime;
     }
 }

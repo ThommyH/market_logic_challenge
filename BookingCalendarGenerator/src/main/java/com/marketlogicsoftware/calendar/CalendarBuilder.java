@@ -3,6 +3,7 @@ package com.marketlogicsoftware.calendar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -13,12 +14,40 @@ import java.util.List;
 
 public class CalendarBuilder {
 
+    /**
+     * Creates a Calendar object from the given input string
+     * e.g.
+     * 0900 1700
+     * 2015-08-17 10:17:06 EMP001
+     * 2015-08-21 09:00 2
+     *
+     * @param inputString
+     * @return Calendar based on the inputString
+     * @throws IOException if String reading fails
+     */
+    public Calendar build(String inputString) throws IOException {
+        return build(new BufferedReader(new StringReader(inputString)));
+    }
+
+
+    /**
+     * Creates a Calendar object from the given input file
+     * e.g.
+     * 0900 1700
+     * 2015-08-17 10:17:06 EMP001
+     * 2015-08-21 09:00 2
+     * @param inputFile
+     * @return Calendar based on the inputFile
+     * @throws IOException if file cannot be read
+     */
     public Calendar build(Path inputFile) throws IOException {
+        return build(Files.newBufferedReader(inputFile));
+    }
+
+    private Calendar build(BufferedReader br) throws IOException {
         String submissionEntry;
         String reservationEntry;
         List<Reservation> reservationsList = new ArrayList<>();
-
-        BufferedReader br = Files.newBufferedReader(inputFile);
 
         // first line is office hours
         String officeHoursStr = br.readLine();
@@ -31,7 +60,7 @@ public class CalendarBuilder {
           */
         while ( (submissionEntry = br.readLine()) != null &&
                 (reservationEntry = br.readLine()) != null ){
-            reservationsList.add(createReservation(submissionEntry, reservationEntry));
+            reservationsList.add(buildReservation(submissionEntry, reservationEntry));
         }
         return new Calendar(openingTime, closingTime, reservationsList);
     }
@@ -41,9 +70,9 @@ public class CalendarBuilder {
      *
      * @param submissionEntry  e.g. 2015-08-17 10:17:06 EMP001
      * @param reservationEntry e.g. 2015-08-21 09:00 2
-     * @return
+     * @return a Reservation object containing the information of the input strings
      */
-    private Reservation createReservation(String submissionEntry, String reservationEntry) {
+    private Reservation buildReservation(String submissionEntry, String reservationEntry) {
         String[] submissionSplit = submissionEntry.split(" ");
         String[] reservationSplit = reservationEntry.split(" ");
         DateTimeFormatter dateTimeFormatterWithSeconds = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -68,7 +97,7 @@ public class CalendarBuilder {
      * @param officeHours e.g. "0900 1730"
      * @return [start,end]
      */
-    LocalTime[] parseOfficeHours(String officeHours){
+    private LocalTime[] parseOfficeHours(String officeHours){
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmm");
         String[] split = officeHours.split(" ");
         LocalTime start = LocalTime.parse(split[0],timeFormatter);

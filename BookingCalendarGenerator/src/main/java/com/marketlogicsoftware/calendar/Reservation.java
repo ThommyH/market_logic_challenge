@@ -21,15 +21,23 @@ public class Reservation implements Comparable<Reservation> {
                 bookingTime.toString(), userId, reservationStart.toString(), reservationEnd);
     }
 
+    public void print() {
+        System.out.println(String.format("%s %s %s", reservationStart.toLocalTime(), reservationEnd.toLocalTime(), userId));
+    }
+
+    @Override
+    public int compareTo(Reservation o) {
+        return bookingTime.compareTo(o.getBookingTime());
+    }
+
     /**
      * checks if this Reservation overlaps with another Reservation
      * @param other
-     * @return
+     * @return true if the objects overlap
      */
     public boolean doesOverlapWith(Reservation other){
         // no intersection if reservations are on different days
         if (!other.getReservationStart().toLocalDate().equals(reservationStart.toLocalDate())) return false;
-        // order reservations by startdate
         Reservation first = (reservationStart.isBefore(other.getReservationStart())) ? this : other;
         Reservation second = (reservationStart.isBefore(other.getReservationStart())) ? other : this;
         // reservations overlap if end of the first reservation is after the start of the other
@@ -58,12 +66,4 @@ public class Reservation implements Comparable<Reservation> {
         return reservationEnd;
     }
 
-    public void print() {
-        System.out.println(String.format("%s %s %s", reservationStart.toLocalTime(), reservationEnd.toLocalTime(), userId));
-    }
-
-    @Override
-    public int compareTo(Reservation o) {
-        return bookingTime.compareTo(o.getBookingTime());
-    }
 }

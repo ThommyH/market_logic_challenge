@@ -16,10 +16,10 @@ public class Main {
         Calendar cb = null;
         try {
             cb = cp.build(inputFile);
+            cb.printCalender();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        cb.printCalender();
     }
 
     private static void printUsage() {
