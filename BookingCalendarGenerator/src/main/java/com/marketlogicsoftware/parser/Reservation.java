@@ -21,7 +21,7 @@ public class Reservation implements Comparable<Reservation> {
                 bookingTime.toString(), userId, reservationStart.toString(), reservationEnd);
     }
 
-    public boolean doesIntersect(Reservation other){
+    public boolean doesIntersectWith(Reservation other){
 
         // no intersection if reservations are on different days
         if (!other.getReservationStart().toLocalDate().equals(this.getReservationStart().toLocalDate())) return false;
@@ -59,6 +59,6 @@ public class Reservation implements Comparable<Reservation> {
 
     @Override
     public int compareTo(Reservation o) {
-        return this.getReservationStart().compareTo(o.getReservationStart());
+        return this.getBookingTime().compareTo(o.getBookingTime());
     }
 }

@@ -3,7 +3,9 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class CalenderBookings {
 
@@ -11,42 +13,42 @@ public class CalenderBookings {
     private LocalTime closingTime;
     private TreeMap<LocalDate, List<Reservation>> reservationsByDay = new TreeMap<LocalDate, List<Reservation>>();
 
-    public void setOfficeHours(LocalTime openingTime, LocalTime closingTime){
+    public CalenderBookings(LocalTime openingTime, LocalTime closingTime, List<Reservation> reservations) {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
-
+        reservations
+                .stream()
+                .sorted()
+                .forEach(reservation -> addReservation(reservation));
     }
 
-    public void addReservation(Reservation newReservation) {
+    private void addReservation(Reservation newReservation) {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // check if newReservation is within business hours
         if (!checkReservationIsWithinOpeningHours(newReservation)) return;
-
         LocalDate dateOfReservation = newReservation.getReservationStart().toLocalDate();
-
         if (reservationsByDay.containsKey(dateOfReservation)){
             List<Reservation> reservationsOfDay = reservationsByDay.get(dateOfReservation);
-            for (Reservation registeredReservation : reservationsOfDay) {
-                if (registeredReservation.doesIntersect(newReservation)){
-                    if (newReservation.isSubmittedEarlier(registeredReservation)) {
-                        // overwrite existing newReservation since if was submitted later
-                        reservationsOfDay.remove(registeredReservation);
-                        reservationsOfDay.add(newReservation);
-                        return;
-                    }
-                } else {
-                    reservationsOfDay.add(newReservation);
-                    return;
-                }
+            Optional<Reservation> intersectingReservation = findFirstIntersectingReservation(reservationsOfDay, newReservation);
+            if (!intersectingReservation.isPresent()){
+                reservationsOfDay.add(newReservation);
             }
         } else {
             List<Reservation> newListOfReservations = new ArrayList<>();
             newListOfReservations.add(newReservation);
             reservationsByDay.put(dateOfReservation, newListOfReservations);
-            return;
         }
 
+    }
+
+    private Optional<Reservation> findFirstIntersectingReservation(List<Reservation> reservationsOfDay, Reservation newReservation) {
+        for (Reservation reservation : reservationsOfDay){
+            if (reservation.doesIntersectWith(newReservation)){
+                return Optional.of(reservation);
+            }
+        }
+        return Optional.empty();
     }
 
     private boolean checkReservationIsWithinOpeningHours(Reservation reservation) {

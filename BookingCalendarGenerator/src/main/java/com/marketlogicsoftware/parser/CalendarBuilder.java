@@ -9,31 +9,35 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class CalendarBuilder {
 
-    public CalenderBookings build(Path inputFile) {
+    public CalenderBookings build(Path inputFile) throws IOException {
         String submissionEntry;
         String reservationEntry;
-        CalenderBookings cb = new CalenderBookings();
-        try (BufferedReader br = Files.newBufferedReader(inputFile)) {
-            // first line is office hours
-            String officeHoursStr = br.readLine();
-            LocalTime[] officeHours = parseOfficeHours(officeHoursStr);
-            cb.setOfficeHours(officeHours[0], officeHours[1]);
-            // read 2 lines at a time. no error handling
-            while ( (submissionEntry = br.readLine()) != null &&
-                    (reservationEntry = br.readLine()) != null ){
-                Reservation reservation = createReservation(submissionEntry, reservationEntry);
-                cb.addReservation(reservation);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        List<Reservation> reservationsList = new ArrayList<>();
+
+        BufferedReader br = Files.newBufferedReader(inputFile);
+
+        // first line is office hours
+        String officeHoursStr = br.readLine();
+        LocalTime[] officeHours = parseOfficeHours(officeHoursStr);
+        LocalTime openingTime = officeHours[0];
+        LocalTime closingTime = officeHours[1];
+        /*
+         collect reservations
+         read 2 lines at a time
+          */
+        while ( (submissionEntry = br.readLine()) != null &&
+                (reservationEntry = br.readLine()) != null ){
+            reservationsList.add(createReservation(submissionEntry, reservationEntry));
         }
-        return cb;
+        return new CalenderBookings(openingTime, closingTime, reservationsList);
     }
 
     /**
@@ -64,9 +68,9 @@ public class CalendarBuilder {
     }
 
     /**
-     * Parses office hours string into LocalDates [start,end]
-     * @param officeHours e.g. 0900 1730
-     * @return
+     * Parses office hours string into LocalDates
+     * @param officeHours e.g. "0900 1730"
+     * @return [start,end]
      */
     LocalTime[] parseOfficeHours(String officeHours){
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HHmm");
