@@ -7,23 +7,21 @@ import java.util.TreeMap;
 
 public class CalenderBookings {
 
-    private LocalTime start;
-    private LocalTime end;
-    private List<Reservation> reservations = new ArrayList<>();
+    private LocalTime openingTime;
+    private LocalTime closingTime;
     private TreeMap<LocalDate, List<Reservation>> reservationsByDay = new TreeMap<LocalDate, List<Reservation>>();
 
-    public void setOfficeHours(LocalTime start, LocalTime end){
-        this.start = start;
-        this.end = end;
+    public void setOfficeHours(LocalTime openingTime, LocalTime closingTime){
+        this.openingTime = openingTime;
+        this.closingTime = closingTime;
 
     }
 
     public void addReservation(Reservation newReservation) {
-        reservations.add(newReservation);
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // check if newReservation is within business hours
-        if (!checkValidReservation(newReservation)) return;
+        if (!checkReservationIsWithinOpeningHours(newReservation)) return;
 
         LocalDate dateOfReservation = newReservation.getReservationStart().toLocalDate();
 
@@ -51,13 +49,21 @@ public class CalenderBookings {
 
     }
 
-    private boolean checkValidReservation(Reservation reservation) {
-        return (reservation.getReservationStart().toLocalTime().isAfter(start.minusNanos(1)) &&
-                reservation.getReservationEnd().toLocalTime().isBefore(end.plusNanos(1)));
+    private boolean checkReservationIsWithinOpeningHours(Reservation reservation) {
+        // reservation must be at opening time of after
+        boolean valid = true;
+        if (!reservation.getReservationStart().toLocalTime().isAfter(openingTime) &&
+                !reservation.getReservationStart().toLocalTime().equals(openingTime)){
+            valid = false;
+        }
+        if (!reservation.getReservationEnd().toLocalTime().isBefore(closingTime) &&
+                !reservation.getReservationEnd().toLocalTime().equals(closingTime)){
+            valid = false;
+        }
+        return valid;
     }
 
     public void printCalender() {
-        //reservations.stream().forEach(System.out::println);
         for (LocalDate date : reservationsByDay.keySet()){
             System.out.println(date);
             reservationsByDay.get(date).stream().sorted().forEach(r -> r.print());
